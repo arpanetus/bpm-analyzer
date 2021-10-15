@@ -1,2 +1,2 @@
 # bpm-analyzer
-analyze bpm via data from last.fm
+analyze bpm of the data from last.fm using spotify api
