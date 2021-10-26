@@ -1,12 +1,12 @@
 package spotify
 
 type Spotify struct {
-	token string
+	clientID string
 }
 
 // New creates a new Spotify client.
-func New(token string) *Spotify {
+func New(clientID string) *Spotify {
 	return &Spotify{
-		token: token,
+		clientID: clientID,
 	}
 }
