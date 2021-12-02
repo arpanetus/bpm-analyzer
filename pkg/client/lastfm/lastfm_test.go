@@ -58,7 +58,7 @@ func TestLastFm_GetRecentTracks(t *testing.T) {
 
 	tr := RecentTracks{
 		RecentTracks: RecentTracks_{
-			Track: []Track{
+			Tracks: []*Track{
 				{
 					Artist:     MbIDed{Mbid: "b7ffd2af-418f-4be2-bdd1-22f8b48613da", Text: "Nine Inch Nails"},
 					Streamable: "0",

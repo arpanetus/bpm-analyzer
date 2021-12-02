@@ -23,7 +23,7 @@ var (
 )
 
 const (
-	BaseURL = "http://ws.audioscrobbler.com/2.0/"
+	BaseURL = "https://ws.audioscrobbler.com/2.0/"
 	intBase = 10
 )
 
@@ -63,14 +63,14 @@ var (
 func (l *LastFm) GetUserInfo(ctx context.Context, username string) (*UserInfo, error) {
 	l.defLog.Print(getUserInfoPfx + username)
 
-	url := l.url
-	q := url.Query()
+	queryUrl := l.url
+	q := queryUrl.Query()
 	q.Add("method", "user.getInfo")
 	q.Add("user", username)
 	q.Add("api_key", l.apiKey)
-	url.RawQuery = q.Encode()
+	queryUrl.RawQuery = q.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", queryUrl.String(), nil)
 	if err != nil {
 		l.errLog.Printf(getUserInfoPfx+"cannot create GetUserInfo request: %s", err)
 
@@ -87,18 +87,18 @@ func (l *LastFm) GetUserInfo(ctx context.Context, username string) (*UserInfo, e
 	if resp.StatusCode != http.StatusOK {
 		l.errLog.Printf(getUserInfoPfx+"")
 
-		return fmt.Errorf("unexpected status code: %", resp.StatusCode)
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	u := new(UserInfo)
+	user := new(UserInfo)
 
-	if err := json.NewDecoder(resp.Body).Decode(&u); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&user); err != nil {
 		l.errLog.Printf(getUserInfoPfx+"cannot decode GetUserInfo response: %s", err)
 
 		return nil, fmt.Errorf(getUserInfoPfx+"cannot decode response: %w", err)
 	}
 
-	return u, nil
+	return user, nil
 }
 
 func (l *LastFm) GetRecentTracks(
@@ -109,17 +109,17 @@ func (l *LastFm) GetRecentTracks(
 	pageStr, limitStr := strconv.FormatUint(page, intBase), strconv.FormatUint(limit, intBase)
 	l.defLog.Print(getRecentTracksPfx + username + ", " + pageStr + ", " + limitStr)
 
-	url := l.url
-	q := url.Query()
+	queryUrl := l.url
+	q := queryUrl.Query()
 	q.Add("method", "user.getRecentTracks")
 	q.Add("user", username)
 	q.Add("api_key", l.apiKey)
 	q.Add("page", pageStr)
 	q.Add("limit", limitStr)
 
-	url.RawQuery = q.Encode()
+	queryUrl.RawQuery = q.Encode()
 
-	req, err := http.NewRequestWithContext(ctx, "GET", url.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", queryUrl.String(), nil)
 	if err != nil {
 		l.errLog.Printf(getRecentTracksPfx+"cannot create GetUserInfo request: %s", err)
 
@@ -133,13 +133,13 @@ func (l *LastFm) GetRecentTracks(
 		return nil, fmt.Errorf(getRecentTracksPfx+"cannot get response: %w", err)
 	}
 
-	u := new(RecentTracks)
+	tracks := new(RecentTracks)
 
-	if err := json.NewDecoder(resp.Body).Decode(&u); err != nil {
+	if err := json.NewDecoder(resp.Body).Decode(&tracks); err != nil {
 		l.errLog.Printf(getRecentTracksPfx+"cannot decode GetUserInfo response: %s", err)
 
 		return nil, fmt.Errorf(getRecentTracksPfx+"cannot decode response: %w", err)
 	}
 
-	return u, nil
+	return tracks, nil
 }

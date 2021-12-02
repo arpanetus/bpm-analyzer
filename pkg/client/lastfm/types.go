@@ -69,8 +69,8 @@ type Attr struct {
 }
 
 type RecentTracks_ struct {
-	Track []Track `json:"track"`
-	Attr  Attr    `json:"@attr"`
+	Tracks []*Track `json:"track"`
+	Attr   Attr    `json:"@attr"`
 }
 
 type RecentTracks struct {
